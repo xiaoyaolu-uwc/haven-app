@@ -3,7 +3,7 @@ from assistant_api import sexed_assistant
 
 # === Page config and title ===
 st.set_page_config(page_title="Haven", layout="wide")
-st.title("💖 Haven匿名性知识&情感困扰问答")
+st.title("💖 Haven匿名性&情感健康问答 / Anonymous sexual & emotional health Q&A")
 
 # === Set up persistent chat history ===
 if "chat_history" not in st.session_state:
@@ -18,7 +18,7 @@ if "last_raw" not in st.session_state:
     st.session_state.last_raw = None
 
 # === Handle user input ===
-user_input = st.chat_input("🌱 输入你的问题/Enter your questions below!")
+user_input = st.chat_input("🌱 输入你的问题 / Enter your questions below!")
 
 # If user enters input and we're not already processing
 if user_input and not st.session_state.awaiting_reply:
@@ -28,7 +28,7 @@ if user_input and not st.session_state.awaiting_reply:
     # 2) append a temporary assistant "typing…" bubble and remember its index
     st.session_state.chat_history.append({
         "role": "assistant",
-        "content": "<span style='color:gray'><em>（Haven在找能帮到你的信息，请等等她！/Haven is thinking, give her a sec!）</em></span>"
+        "content": "<span style='color:gray'><em>Haven正在搜集信息，请等等她! / Haven is thinking, give her a sec!</em></span>"
     })    
     st.session_state.pending_assistant_idx = len(st.session_state.chat_history) - 1
     
