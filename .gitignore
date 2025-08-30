@@ -1,0 +1,32 @@
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environments
+.env
+.venv/
+env/
+venv/
+
+# Logs
+*.log
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Streamlit state
+.streamlit/
+
+# Docker
+*.pid
+*.sock
+*.tar
+*.img
+docker-compose.override.yml
+
+# Editors
+.vscode/
+.idea/
+*.swp
