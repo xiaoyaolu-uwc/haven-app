@@ -29,7 +29,8 @@ if user_input and not st.session_state.awaiting_reply:
     st.session_state.chat_history.append({
         "role": "assistant",
         "content": "<span style='color:gray'><em>（Haven在找能帮到你的信息，等一下她！/Haven is thinking, give her a sec!）</em></span>"
-    })    st.session_state.pending_assistant_idx = len(st.session_state.chat_history) - 1
+    })    
+    st.session_state.pending_assistant_idx = len(st.session_state.chat_history) - 1
 
     # 3) mark that we owe a reply and rerun to trigger the reply phase
     st.session_state.awaiting_reply = True
