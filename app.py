@@ -9,37 +9,57 @@ st.title("💖 匿名性知识&情感困扰问答")
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
 
-# === Handle user input ===
-user_input = st.chat_input("🌱 输入你的问题/Enter your questions below!")
-
-# track last raw payload for the expander
+# === check session state ====
+if "awaiting_reply" not in st.session_state:
+    st.session_state.awaiting_reply = False
+if "pending_assistant_idx" not in st.session_state:
+    st.session_state.pending_assistant_idx = None
 if "last_raw" not in st.session_state:
     st.session_state.last_raw = None
 
-if user_input:
-    # append user message
+# === Handle user input ===
+user_input = st.chat_input("🌱 输入你的问题/Enter your questions below!")
+
+# If reply is not pending, instantly generate the user input
+if user_input and not st.session_state.awaiting_reply:
+    # 1) append the user's message
     st.session_state.chat_history.append({"role": "user", "content": user_input})
 
-    # call backend
-    with st.spinner("正在生成答复，请稍候…"):
-        answer, raw = sexed_assistant(user_input)
+    # 2) append a temporary assistant "typing…" bubble and remember its index
+    st.session_state.chat_history.append({
+        "role": "assistant",
+        "content": "<span style='color:gray'><em>（Haven在找能帮到你的信息，等等她！）</em></span>"
+    })    st.session_state.pending_assistant_idx = len(st.session_state.chat_history) - 1
 
-    # remember raw for the expander (shown after render loop)
+    # 3) mark that we owe a reply and rerun to trigger the reply phase
+    st.session_state.awaiting_reply = True
+    st.rerun()
+
+# If a reply is pending, generate it now and replace the placeholder bubble
+if st.session_state.awaiting_reply:
+    # Find the last user message
+    last_user = next((m["content"] for m in reversed(st.session_state.chat_history) if m["role"] == "user"), "")
+    answer, raw = sexed_assistant(last_user)
+
     st.session_state.last_raw = raw
 
-    # append assistant turn (success or error)
-    if answer and not answer.startswith("Error:"):
-        st.session_state.chat_history.append({"role": "assistant", "content": answer})
-    else:
-        err = answer or "未能获取答复。请稍后重试。"
-        st.error(err)
-        st.session_state.chat_history.append(
-            {"role": "assistant", "content": f"抱歉，我现在遇到一些问题：{err}"}
-        )
+    # Replace the placeholder content in-place
+    idx = st.session_state.pending_assistant_idx
+    if idx is not None and 0 <= idx < len(st.session_state.chat_history):
+        if answer and not str(answer).startswith("Error:"):
+            st.session_state.chat_history[idx]["content"] = answer
+        else:
+            err = answer or "未能获取答复。请稍后重试。"
+            st.session_state.chat_history[idx]["content"] = f"抱歉，我现在遇到一些问题：{err}"
+
+    # clear flags and re-render with updated content
+    st.session_state.awaiting_reply = False
+    st.session_state.pending_assistant_idx = None
+    st.rerun()
 
 # === Render full chat history (now shows updates from this run) ===
 for msg in st.session_state.chat_history:
-    st.chat_message(msg["role"]).markdown(msg["content"])
+    st.chat_message(msg["role"]).markdown(msg["content"], unsafe_allow_html=True)
 
 # optional debug expander for the last backend payload
 if st.session_state.last_raw:
