@@ -3,7 +3,7 @@ from assistant_api import sexed_assistant
 
 # === Page config and title ===
 st.set_page_config(page_title="Haven", layout="wide")
-st.title("💖 匿名性知识&情感困扰问答")
+st.title("💖 Haven匿名性知识&情感困扰问答")
 
 # === Set up persistent chat history ===
 if "chat_history" not in st.session_state:
@@ -28,7 +28,7 @@ if user_input and not st.session_state.awaiting_reply:
     # 2) append a temporary assistant "typing…" bubble and remember its index
     st.session_state.chat_history.append({
         "role": "assistant",
-        "content": "<span style='color:gray'><em>（Haven在找能帮到你的信息，等等她！）</em></span>"
+        "content": "<span style='color:gray'><em>（Haven在找能帮到你的信息，等一下她！/Haven is thinking, give her a sec!）</em></span>"
     })    st.session_state.pending_assistant_idx = len(st.session_state.chat_history) - 1
 
     # 3) mark that we owe a reply and rerun to trigger the reply phase
