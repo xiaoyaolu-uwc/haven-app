@@ -23,11 +23,12 @@ def sexed_assistant(user_input):
 
         data = response.json()
 
-        if not data or not isinstance(data, list) or "text" not in data[0]:
+        if not data or not isinstance(data, list) or "answer" not in data[0]:
             return "Error: Malformed response from backend", None
 
-        output_text = data[0]["text"]
-        return output_text, data[0]
+        answer = data[0]["answer"]
+        sources = data[0]["sources"]
+        return answer, sources
 
     except requests.exceptions.Timeout:
         return "Error: Request timed out. n8n may be slow or down.", None

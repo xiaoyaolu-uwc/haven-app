@@ -14,8 +14,8 @@ if "awaiting_reply" not in st.session_state:
     st.session_state.awaiting_reply = False
 if "pending_assistant_idx" not in st.session_state:
     st.session_state.pending_assistant_idx = None
-if "last_raw" not in st.session_state:
-    st.session_state.last_raw = None
+if "last_sources" not in st.session_state:
+    st.session_state.last_sources = None
 
 # === Handle user input ===
 user_input = st.chat_input("🌱 输入你的问题 / Enter your questions below!")
@@ -45,8 +45,8 @@ if st.session_state.awaiting_reply:
     last_user = next((m["content"] for m in reversed(st.session_state.chat_history) if m["role"] == "user"), "")
     
     # Generate the response
-    answer, raw = sexed_assistant(last_user)
-    st.session_state.last_raw = raw
+    answer, sources = sexed_assistant(last_user)
+    st.session_state.last_sources = sources
 
     # Replace the placeholder content in-place
     idx = st.session_state.pending_assistant_idx
@@ -55,7 +55,7 @@ if st.session_state.awaiting_reply:
             st.session_state.chat_history[idx]["content"] = answer
         else:
             err = answer or "未能获取答复。请稍后重试。"
-            st.session_state.chat_history[idx]["content"] = f"抱歉，Haven现在遇到一些问题：{err}"
+            st.session_state.chat_history[idx]["content"] = f"Haven遇到了一些问题, 我们正在火速修理 / Sorry, Haven is down right now, we're trying to fix it ASAP：{err}"
 
     # Clear flags and rerun to show the final response
     st.session_state.awaiting_reply = False
@@ -63,6 +63,6 @@ if st.session_state.awaiting_reply:
     st.rerun()
 
 # Optional debug expander for the last backend payload
-if st.session_state.last_raw:
-    with st.expander("🛠 查看原始输出（调试用）"):
-        st.json(st.session_state.last_raw)
+if st.session_state.last_sources:
+    with st.expander("📚 Haven阅读的书和网站 / Sources Haven used:"):
+        st.json(st.session_state.last_sources)
