@@ -65,4 +65,4 @@ if st.session_state.awaiting_reply:
 # Optional debug expander for the last backend payload
 if st.session_state.last_sources:
     with st.expander("📚 Haven阅读的书和网站 / Sources Haven used:"):
-        st.json(st.session_state.last_sources)
+        st.write(st.session_state.last_sources)
